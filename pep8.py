@@ -258,6 +258,19 @@ def maximum_line_length(physical_line):
 # Plugins (check functions) for logical lines
 ##############################################################################
 
+def functions_with_docstrings(logical_line, line_number,
+                              lines):
+    """
+    Checks to see if all functions have a docstring.
+    """
+    if logical_line.find("def") == 0:
+        if lines[line_number].find("\"\"\"") != -1:
+            for line in lines[line_number + 1:]:
+                if line.find("\"\"\"") != -1:
+                    return
+
+        print(logical_line, "is not documented", line_number)
+
 
 def blank_lines(logical_line, blank_lines, indent_level, line_number,
                 previous_logical, previous_indent_level,
@@ -720,12 +733,18 @@ def python_3000_backticks(logical_line):
 if '' == ''.encode():
     # Python 2: implicit encoding.
     def readlines(filename):
+        """
+        Opens the file to be read
+        """
         return open(filename).readlines()
 else:
     # Python 3: decode to latin-1.
     # This function is lazy, it does not read the encoding declaration.
     # XXX: use tokenize.detect_encoding()
     def readlines(filename):
+        """
+        Opens the file to be read
+        """
         return open(filename, encoding='latin-1').readlines()
 
 
@@ -819,6 +838,9 @@ class Checker(object):
     """
 
     def __init__(self, filename, lines=None):
+        """
+        Sets up what file the checker should work on.
+        """
         self.filename = filename
         if filename is None:
             self.filename = 'stdin'
@@ -1088,6 +1110,7 @@ def ignore_code(code):
 
 
 def reset_counters():
+    """Resets the counters for errors"""
     for key in list(options.counters.keys()):
         if key not in BENCHMARK_KEYS:
             del options.counters[key]
